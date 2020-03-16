@@ -4,11 +4,9 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
 
 class TextAnimatedWidget extends StatefulWidget {
-  final String symbol;
   final double begin;
   final double end;
-  const TextAnimatedWidget(
-      {Key key, this.begin = 1.0, this.end = 0, this.symbol})
+  const TextAnimatedWidget({Key key, this.begin = 1.0, this.end = 0})
       : super(key: key);
   @override
   TextAnimatedWidgetState createState() => TextAnimatedWidgetState();
@@ -25,10 +23,7 @@ class TextAnimatedWidgetState extends State<TextAnimatedWidget>
   void initState() {
     super.initState();
 
-    formatCurrency = NumberFormat.currency(
-      symbol: widget.symbol,
-      locale: 'pt-BR',
-    );
+    formatCurrency = NumberFormat.currency(locale: 'pt-BR', symbol: '');
     _controller = AnimationController(
         vsync: this,
         duration: widget.begin == widget.end || widget.begin == 0
@@ -38,7 +33,7 @@ class TextAnimatedWidgetState extends State<TextAnimatedWidget>
     _animation =
         Tween(begin: widget.begin, end: widget.end).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.fastOutSlowIn,
+      curve: Curves.easeInOutBack,
     ));
     _controller.forward();
 
@@ -60,7 +55,8 @@ class TextAnimatedWidgetState extends State<TextAnimatedWidget>
                 color: _controller.status != AnimationStatus.completed
                     ? widget.begin - widget.end > 0 ? Colors.red : Colors.green
                     : Colors.black,
-                fontSize: 50),
+                fontSize: 50,
+                fontWeight: FontWeight.bold),
           );
         });
   }

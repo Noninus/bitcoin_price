@@ -24,6 +24,7 @@ dependencies:
   path_provider: ^1.6.0
   overlay_support: ^1.0.2
   rxdart: ^0.23.1
+  flutter_statusbarcolor: ^0.2.3  
   flutter_modular: ^0.5.6
   flutter:
     sdk: flutter

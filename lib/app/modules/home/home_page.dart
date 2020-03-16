@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     formatCurrency = NumberFormat.currency(
-      symbol: 'R\$',
+      symbol: '',
       locale: 'pt-BR',
     );
     super.initState();
@@ -27,62 +27,71 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Observer(builder: (BuildContext context) {
-          if (homeController.tickerBitcoin.error != null) {
-            return Center(
-                child: Column(
-              children: <Widget>[
-                Text("${homeController.tickerBitcoin.error}"),
-                RaisedButton(
-                    onPressed: () => homeController.fetchBitCoinValue())
-              ],
-            ));
+    return Scaffold(body: Observer(builder: (BuildContext context) {
+      if (homeController.tickerBitcoin.error != null) {
+        return Center(
+            child: Column(
+          children: <Widget>[
+            Text("${homeController.tickerBitcoin.error}"),
+            RaisedButton(onPressed: () => homeController.fetchBitCoinValue())
+          ],
+        ));
+      }
+
+      if (homeController.tickerBitcoin.value == null) {
+        return Observer(builder: (_) {
+          if (homeController.brlValue.value == 0.0) {
+            return Center(child: CircularProgressIndicator());
           }
-
-          if (homeController.tickerBitcoin.value == null) {
-            return Observer(builder: (_) {
-              if (homeController.brlValue.value == 0.0) {
-                return Center(child: CircularProgressIndicator());
-              }
-              return Center(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "${formatCurrency.format(homeController.brlValue.value)}",
-                    style: TextStyle(color: Colors.black, fontSize: 50),
-                  ),
-                  Container(
-                      height: 50, width: 50, child: CircularProgressIndicator())
-                ],
-              ));
-            });
-          } else {
-            homeController.changeBrlValue();
-
-            return Center(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextAnimatedWidget(
-                    symbol: homeController.brlValue.symbol,
-                    begin: homeController.brlValue.oldValue,
-                    end: homeController.brlValue.value),
-                Container(
+          return Center(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(homeController.brlValue.symbol,
+                  style: TextStyle(color: Colors.grey, fontSize: 36)),
+              Text(
+                "${formatCurrency.format(homeController.brlValue.value)}",
+                style: TextStyle(color: Colors.black, fontSize: 50),
+              ),
+              Text(DateFormat.Hm().format(homeController.dateTime),
+                  style: TextStyle(color: Colors.grey, fontSize: 24)),
+              Container(
                   height: 50,
                   width: 50,
-                  child: IconButton(
-                      iconSize: 50,
-                      icon: Icon(Icons.refresh),
-                      onPressed: () => homeController.fetchBitCoinValue()),
-                )
-              ],
-            ));
-          }
-        }));
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor:
+                        new AlwaysStoppedAnimation<Color>(Color(0xFFFF6700)),
+                  ))
+            ],
+          ));
+        });
+      } else {
+        homeController.changeBrlValue();
+
+        return Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(homeController.brlValue.symbol,
+                style: TextStyle(color: Colors.grey, fontSize: 36)),
+            TextAnimatedWidget(
+                begin: homeController.brlValue.oldValue,
+                end: homeController.brlValue.value),
+            Text(DateFormat.Hm().format(homeController.dateTime),
+                style: TextStyle(color: Colors.grey, fontSize: 24)),
+            Container(
+              height: 50,
+              width: 50,
+              child: IconButton(
+                  iconSize: 50,
+                  color: Color(0xFFFF6700),
+                  icon: Icon(Icons.refresh),
+                  onPressed: () => homeController.fetchBitCoinValue()),
+            )
+          ],
+        ));
+      }
+    }));
   }
 }

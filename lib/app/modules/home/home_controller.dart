@@ -11,6 +11,9 @@ abstract class _HomeControllerBase with Store {
   final HomeRepository repository;
 
   @observable
+  DateTime dateTime = DateTime.now();
+
+  @observable
   ObservableFuture<TickerBitcoin> tickerBitcoin;
 
   @observable
@@ -41,16 +44,14 @@ abstract class _HomeControllerBase with Store {
   @action
   void fetchBitCoinValue() {
     try {
+      dateTime = DateTime.now();
       tickerBitcoin = repository.getBitcoinValues().asObservable();
     } on DioError catch (e) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx and is also not 304.
       if (e.response != null) {
         print(e.response.data);
         print(e.response.headers);
         print(e.response.request);
       } else {
-        // Something happened in setting up or sending the request that triggered an Error
         print(e.request);
         print(e.message);
       }
